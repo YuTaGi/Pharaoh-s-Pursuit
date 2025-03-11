@@ -1,5 +1,6 @@
-using UnityEngine;
+๏ปฟusing UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using TMPro;
 
 public class GunSystem : MonoBehaviour
@@ -10,19 +11,19 @@ public class GunSystem : MonoBehaviour
     public float damage = 10f;
     public float range = 100f;
 
-    private Camera fpsCamera; // ไม่ต้องตั้งค่าใน Inspector
+    public Camera fpsCamera;
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
-
+    
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI reloadText;
+    public Image reloadImage;
 
     private bool isReloading = false;
 
     void Start()
     {
         currentAmmo = maxAmmo;
-        fpsCamera = FPSController.instance.playerCamera; // ดึงกล้องจาก FPSController อัตโนมัติ
         UpdateAmmoUI();
     }
 
@@ -43,7 +44,6 @@ public class GunSystem : MonoBehaviour
     void Shoot()
     {
         currentAmmo--;
-
         if (muzzleFlash != null)
             muzzleFlash.Play();
 
@@ -72,13 +72,26 @@ public class GunSystem : MonoBehaviour
     {
         isReloading = true;
         reloadText.text = "Reloading...";
+        ShowEffect(reloadImage);
+
         yield return new WaitForSeconds(reloadTime);
 
         currentAmmo = maxAmmo;
         isReloading = false;
         reloadText.text = "";
-
         UpdateAmmoUI();
+    }
+
+    void ShowEffect(Image effectImage)
+    {
+        StartCoroutine(ShowAndHideEffect(effectImage, reloadTime));
+    }
+
+    IEnumerator ShowAndHideEffect(Image effectImage, float duration)
+    {
+        effectImage.color = new Color(effectImage.color.r, effectImage.color.g, effectImage.color.b, 1);
+        yield return new WaitForSeconds(duration);
+        effectImage.color = new Color(effectImage.color.r, effectImage.color.g, effectImage.color.b, 0);
     }
 
     void UpdateAmmoUI()

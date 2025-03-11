@@ -26,29 +26,32 @@ public class Enemy : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance <= detectRange)  // ถ้าผู้เล่นอยู่ในระยะตรวจจับ
+        if (distance <= detectRange)
         {
             agent.SetDestination(player.position); // เดินไปหาผู้เล่น
+
+            if (distance <= 1.5f && Time.time > lastAttackTime + attackCooldown)
+            {
+                // ยิง Ray ตรวจสอบว่ามีสิ่งกีดขวางหรือไม่
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out hit, detectRange))
+                {
+                    if (hit.collider.CompareTag("Player"))
+                    {
+                        Debug.Log("Enemy โจมตี Player!");
+                        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+                        if (playerHealth != null)
+                        {
+                            playerHealth.TakeDamage(damage);
+                            lastAttackTime = Time.time;
+                        }
+                    }
+                }
+            }
         }
         else
         {
-            agent.ResetPath(); // หยุดเมื่ออยู่นอกระยะ
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            if (Time.time > lastAttackTime + attackCooldown)
-            {
-                PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-                if (playerHealth != null)
-                {
-                    playerHealth.TakeDamage(damage);
-                    lastAttackTime = Time.time; // อัปเดตเวลาการโจมตี
-                }
-            }
+            agent.ResetPath();
         }
     }
 
