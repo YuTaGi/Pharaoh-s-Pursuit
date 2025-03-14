@@ -3,11 +3,11 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    public float health = 50f;         // เลือดของศัตรู
-    public float speed = 3.5f;         // ความเร็วการเคลื่อนที่
-    public float damage = 10f;         // ดาเมจที่ทำต่อผู้เล่น
-    public float attackCooldown = 1f;  // เวลาหน่วงก่อนโจมตีอีกครั้ง
-    public float detectRange = 10f;    // ระยะตรวจจับผู้เล่น
+    public float health = 50f;         
+    public float speed = 3.5f;         
+    public float damage = 10f;         
+    public float attackCooldown = 1f;  
+    public float detectRange = 10f;    
 
     private Transform player;
     private NavMeshAgent agent;
@@ -28,11 +28,11 @@ public class Enemy : MonoBehaviour
 
         if (distance <= detectRange)
         {
-            agent.SetDestination(player.position); // เดินไปหาผู้เล่น
+            agent.SetDestination(player.position); 
 
             if (distance <= 1.5f && Time.time > lastAttackTime + attackCooldown)
             {
-                // ยิง Ray ตรวจสอบว่ามีสิ่งกีดขวางหรือไม่
+                
                 RaycastHit hit;
                 if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out hit, detectRange))
                 {
@@ -66,7 +66,8 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject); // ลบศัตรูออกจากเกม
+        ScoreManager.instance.AddScore(1);
+        Destroy(gameObject);
     }
 }
 

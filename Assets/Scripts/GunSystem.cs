@@ -19,6 +19,10 @@ public class GunSystem : MonoBehaviour
     public TextMeshProUGUI reloadText;
     public Image reloadImage;
 
+    public AudioSource audioSource;   
+    public AudioClip shootSound;      
+    public AudioClip reloadSound;
+
     private bool isReloading = false;
 
     void Start()
@@ -47,6 +51,9 @@ public class GunSystem : MonoBehaviour
         if (muzzleFlash != null)
             muzzleFlash.Play();
 
+        if (audioSource != null && shootSound != null)
+            audioSource.PlayOneShot(shootSound);
+
         RaycastHit hit;
         if (Physics.Raycast(fpsCamera.transform.position, fpsCamera.transform.forward, out hit, range))
         {
@@ -73,6 +80,9 @@ public class GunSystem : MonoBehaviour
         isReloading = true;
         reloadText.text = "Reloading...";
         ShowEffect(reloadImage);
+
+        if (audioSource != null && reloadSound != null)
+            audioSource.PlayOneShot(reloadSound);
 
         yield return new WaitForSeconds(reloadTime);
 

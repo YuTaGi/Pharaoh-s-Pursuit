@@ -1,10 +1,17 @@
-using System.Collections;
+๏ปฟusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HealthPack : MonoBehaviour
 {
-    public float healAmount = 25f; // ค่าพลังชีวิตที่เพิ่ม
+    public float healAmount = 30f; 
+    public AudioClip healSound;
+    public AudioSource audioSource;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,7 +21,13 @@ public class HealthPack : MonoBehaviour
             if (playerHealth != null)
             {
                 playerHealth.Heal(healAmount);
-                Destroy(gameObject); // ลบกล่องเลือดเมื่อใช้งาน
+
+                if (audioSource != null && healSound != null)
+                {
+                    audioSource.PlayOneShot(healSound);
+                }
+
+                Destroy(gameObject, 0.2f);
             }
         }
     }

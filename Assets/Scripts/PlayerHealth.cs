@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -9,8 +10,8 @@ public class PlayerHealth : MonoBehaviour
     private float currentHealth;
     public TextMeshProUGUI healthText;
 
-    public Image damageImage;  // ✅ รูปภาพแสดงเมื่อโดนดาเมจ
-    public Image healImage;    // ✅ รูปภาพแสดงเมื่อเก็บเลือด
+    public Image damageImage;
+    public Image healImage;
 
     void Start()
     {
@@ -22,7 +23,7 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth -= amount;
         UpdateHealthUI();
-        ShowEffect(damageImage); // ✅ แสดงภาพเมื่อโดนดาเมจ
+        ShowEffect(damageImage);
 
         if (currentHealth <= 0)
         {
@@ -36,12 +37,12 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
 
         UpdateHealthUI();
-        ShowEffect(healImage); // ✅ แสดงภาพเมื่อเก็บเลือด
+        ShowEffect(healImage); 
     }
 
     void ShowEffect(Image effectImage)
     {
-        StartCoroutine(ShowAndHideEffect(effectImage, 0.5f)); // แสดง 0.5 วิ
+        StartCoroutine(ShowAndHideEffect(effectImage, 0.5f));
     }
 
     IEnumerator ShowAndHideEffect(Image effectImage, float duration)
@@ -58,6 +59,9 @@ public class PlayerHealth : MonoBehaviour
 
     void Die()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         Debug.Log("Player Died!");
+        SceneManager.LoadScene("Failed");
     }
 }
