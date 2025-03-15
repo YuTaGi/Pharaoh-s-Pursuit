@@ -3,20 +3,22 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    public float health = 50f;         
-    public float speed = 3.5f;         
-    public float damage = 10f;         
-    public float attackCooldown = 1f;  
-    public float detectRange = 10f;    
+    public float health = 50f;
+    public float speed = 3.5f;
+    public float damage = 10f;
+    public float attackCooldown = 1f;
+    public float detectRange = 10f;
 
     private Transform player;
     private NavMeshAgent agent;
+    private Animator anim;
     private float lastAttackTime;
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();  // ¥÷ß Component Animator
         agent.speed = speed;
     }
 
@@ -28,30 +30,40 @@ public class Enemy : MonoBehaviour
 
         if (distance <= detectRange)
         {
-            agent.SetDestination(player.position); 
+            agent.SetDestination(player.position);
+            anim.SetBool("isWalking", true); // ‡≈ËπÕπ‘‡¡™—π‡¥‘π
 
             if (distance <= 1.5f && Time.time > lastAttackTime + attackCooldown)
             {
-                
-                RaycastHit hit;
-                if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out hit, detectRange))
-                {
-                    if (hit.collider.CompareTag("Player"))
-                    {
-                        Debug.Log("Enemy ‚®¡µ’ Player!");
-                        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
-                        if (playerHealth != null)
-                        {
-                            playerHealth.TakeDamage(damage);
-                            lastAttackTime = Time.time;
-                        }
-                    }
-                }
+                AttackPlayer();
             }
         }
         else
         {
             agent.ResetPath();
+            anim.SetBool("isWalking", false); // À¬ÿ¥‡¥‘π
+        }
+    }
+
+    void AttackPlayer()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out hit, detectRange))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                anim.SetTrigger("Attack"); // ‡≈ËπÕπ‘‡¡™—π‚®¡µ’
+                Debug.Log("Trigger Attack Animation!");
+                Debug.Log("Enemy ‚®¡µ’ Player!");
+
+                PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(damage);
+                    //anim.SetTrigger("Attack");
+                    lastAttackTime = Time.time;
+                }
+            }
         }
     }
 
@@ -70,4 +82,3 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 }
-
