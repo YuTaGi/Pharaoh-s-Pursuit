@@ -13,6 +13,10 @@ public class PlayerHealth : MonoBehaviour
     public Image damageImage;
     public Image healImage;
 
+    public AudioSource audioSource; // 🎵 ตัวเล่นเสียง
+    public AudioClip damageSound;   // 🔊 เสียงตอนโดนดาเมจ
+    public AudioClip healSound;     // 🔊 เสียงตอนฮีล
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -24,6 +28,12 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= amount;
         UpdateHealthUI();
         ShowEffect(damageImage);
+
+        // ✅ เล่นเสียงตอนโดนดาเมจ
+        if (audioSource != null && damageSound != null)
+        {
+            audioSource.PlayOneShot(damageSound);
+        }
 
         if (currentHealth <= 0)
         {
@@ -37,7 +47,13 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
 
         UpdateHealthUI();
-        ShowEffect(healImage); 
+        ShowEffect(healImage);
+
+        // ✅ เล่นเสียงตอนได้รับการฮีล
+        if (audioSource != null && healSound != null)
+        {
+            audioSource.PlayOneShot(healSound);
+        }
     }
 
     void ShowEffect(Image effectImage)

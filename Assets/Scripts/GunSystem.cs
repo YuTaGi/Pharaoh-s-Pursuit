@@ -14,7 +14,8 @@ public class GunSystem : MonoBehaviour
     public Camera fpsCamera;
     public ParticleSystem muzzleFlash;
     public GameObject impactEffect;
-    
+    public GameObject hitEffect;
+
     public TextMeshProUGUI ammoText;
     public TextMeshProUGUI reloadText;
     public Image reloadImage;
@@ -48,6 +49,7 @@ public class GunSystem : MonoBehaviour
     void Shoot()
     {
         currentAmmo--;
+
         if (muzzleFlash != null)
             muzzleFlash.Play();
 
@@ -63,6 +65,12 @@ public class GunSystem : MonoBehaviour
             if (enemy != null)
             {
                 enemy.TakeDamage(damage);
+
+                if (hitEffect != null)
+                {
+                    GameObject effect = Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                    Destroy(effect, 0.5f);
+                }
             }
 
             if (impactEffect != null)
@@ -74,6 +82,7 @@ public class GunSystem : MonoBehaviour
 
         UpdateAmmoUI();
     }
+
 
     IEnumerator Reload()
     {
